@@ -10,6 +10,15 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+// Verify connection configuration
+transporter.verify(function (error, success) {
+    if (error) {
+        console.log('[EMAIL ERROR] SMTP connection failed:', error);
+    } else {
+        console.log('[EMAIL] Server is ready to take our messages');
+    }
+});
+
 const sendEmail = async (to, subject, html, attachments = []) => {
     try {
         const mailOptions = {
@@ -24,7 +33,7 @@ const sendEmail = async (to, subject, html, attachments = []) => {
         console.log(`[EMAIL] Sent to ${to}: ${info.messageId}`);
         return info;
     } catch (error) {
-        console.error(`[EMAIL ERROR] Failed to send to ${to}:`, error.message);
+        console.error(`[EMAIL ERROR] Failed to send to ${to}:`, error);
         // We return null to indicate failure but don't throw, 
         // allowing the main process (like registration) to complete.
         return null;

@@ -5,7 +5,7 @@ const { protect, authorize } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 router.get('/', getContent);
-router.post('/batch', protect, authorize('admin', 'super_admin'), updateContent);
-router.post('/media', protect, authorize('admin', 'super_admin'), upload.single('media'), uploadMedia);
+router.post('/batch', protect, authorize('super_admin'), updateContent);
+router.post('/media', protect, authorize('super_admin'), upload.single('media'), uploadMedia);
 
 module.exports = router;

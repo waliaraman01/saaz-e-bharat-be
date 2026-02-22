@@ -4,7 +4,7 @@ const registrationSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ['Visitor', 'Artist', 'StallExhibitor', 'FoodVendor', 'Media', 'Volunteer', 'Sponsor'],
+        enum: ['Visitor', 'Artist', 'Stall Exhibitor', 'Food Vendor', 'Media', 'Volunteer', 'Sponsor'],
         index: true
     },
     email: {
@@ -19,16 +19,23 @@ const registrationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    fullName: {
+        type: String,
+        required: true
+    },
+    organization: String, // Organization / Group Name
+
     isEmailVerified: {
         type: Boolean,
         default: false
     },
     status: {
         type: String,
-        enum: ['pending', 'approved', 'rejected'],
-        default: 'pending',
+        enum: ['pending_verification', 'pending_review', 'approved', 'rejected'],
+        default: 'pending_verification',
         index: true
     },
+
     qrId: {
         type: String,
         unique: true,
@@ -39,37 +46,46 @@ const registrationSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    checkInTime: {
-        type: Date
-    },
+    checkInTime: Date,
 
-    // Category specific fields
-    fullName: String,
-    city: String,
-    idType: String,
+    // Category specific fields (Flat collection with category object strategy as per user request)
 
-    artistName: String,
+    // Visitor
+    attendanceDay: String,
+    interests: [String],
+    referralSource: String,
+
+    // Artist
     artForm: String,
-    state: String,
-    portfolioUrl: String,
+    performanceType: { type: String, enum: ['Solo', 'Group'] },
+    groupSize: Number,
+    portfolioUrl: String, // Previous Performance Link
+    performanceDescription: String,
+    expectedHonorarium: Number,
 
-    businessName: String,
-    stallCategory: String,
-    gstNumber: String,
-
-    brandName: String,
-    cuisineType: String,
-    fssaiNumber: String,
-
-    organization: String,
-    mediaType: String,
-    pressIdUrl: String,
-
-    preferredRole: String,
-    availability: String,
-
+    // Sponsor
     companyName: String,
-    sponsorshipTier: String,
+    industry: String,
+    department: String,
+    interestedAs: String,
+    reasonForJoining: String,
+
+    // Stall Exhibitor
+    typeOfStall: String,
+    productsToDisplay: String,
+
+    // Food Vendor
+    stateCuisine: String,
+    foodItems: String,
+
+    // Media
+    mediaHouseName: String,
+    mediaType: String,
+
+    // Volunteer
+    availability: [String], // Array for checkbox selection
+    preferredRole: String,
+
     documentUrl: String,
 
     // Verification fields
@@ -79,7 +95,7 @@ const registrationSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-// Indexes mentioned in the spec
+// Indexes for performance
 registrationSchema.index({ category: 1, status: 1 });
 registrationSchema.index({ createdAt: -1 });
 

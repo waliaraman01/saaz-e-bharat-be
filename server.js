@@ -32,6 +32,30 @@ const registrationRoutes = require('./routes/registrations');
 const adminRoutes = require('./routes/admins');
 const contentRoutes = require('./routes/content');
 const auditRoutes = require('./routes/audit');
+const { protect, authorize } = require('./middleware/auth');
+const Registration = require('./models/Registration');
+const { logAction } = require('./utils/logger');
+
+// Direct Deletion Route (FIX for ghost 404s)
+app.delete('/api/registrations/:id', protect, authorize('super_admin'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(`[DEBUG_DIRECT] Attempting delete for ID: ${id}`);
+        const registration = await Registration.findById(id);
+        if (!registration) {
+            console.log(`[DEBUG_DIRECT] Registration ${id} not found.`);
+            return res.status(404).json({ message: 'Registration not found in database (Direct Handler)' });
+        }
+
+        await logAction(req, 'DELETE_REGISTRATION', id, 'Registration', { email: registration.email });
+        await Registration.findByIdAndDelete(id);
+        console.log(`[DEBUG_DIRECT] Delete successful for ${id}`);
+        res.json({ message: 'Registration deleted successfully (Direct Path)' });
+    } catch (error) {
+        console.error(`[DEBUG_DIRECT] Error: ${error.message}`);
+        res.status(500).json({ message: `Direct Delete System Error: ${error.message}` });
+    }
+});
 
 // API Routes
 app.use('/api/registrations', registrationRoutes);
@@ -51,7 +75,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// 404 Handler for undefined routes
+// 404 Handler
 app.use((req, res) => {
     console.log(`[404 NOT FOUND] ${req.method} ${req.url}`);
     res.status(404).json({ message: `Route ${req.method} ${req.url} not found` });
@@ -69,4 +93,3 @@ mongoose.connect(MONGODB_URI)
     .catch((err) => {
         console.error('MongoDB connection error:', err);
     });
-
