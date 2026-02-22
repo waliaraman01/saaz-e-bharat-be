@@ -3,7 +3,8 @@ const { logAction } = require('../utils/logger');
 
 exports.getContent = async (req, res) => {
     try {
-        const content = await Content.find().populate('updatedBy', 'username email');
+        // Only select fields needed for display to prevent leaking sensitive admin metadata
+        const content = await Content.find({}, 'key value section -_id');
         res.json(content);
     } catch (error) {
         res.status(500).json({ message: error.message });
