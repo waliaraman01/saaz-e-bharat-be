@@ -13,3 +13,7 @@ router.get('/', getAdmins);
 router.delete('/:id', deleteAdmin);
 
 module.exports = router;
+
+
+
+
