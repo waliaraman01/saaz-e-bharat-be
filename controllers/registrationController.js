@@ -36,6 +36,10 @@ async function processApproval(id, adminReq = null) {
   const category = registration.category;
   const personalizedBody = bodyText.replace(/{name}/g, name).replace(/{category}/g, category);
 
+  const venueAddress = getSetting('EMAIL_VENUE_ADDRESS', 'Jawaharlal Nehru Stadium, Delhi 110003');
+  const greetingText = getSetting('EMAIL_CONFIRM_GREETING', `Your presence will add a vibrant thread to the rich tapestry of stories we aim to tell at ${venueAddress}. We look forward to creating unforgettable memories together.`);
+  const personalizedGreeting = greetingText.replace(/{venue}/g, venueAddress);
+
   const emailHtml = `
       <div style="font-family: 'Playfair Display', serif; max-width: 600px; margin: 0 auto; border-radius: 24px; overflow: hidden; background: #fffcf8; border: 1px solid #f1e4d1; box-shadow: 0 20px 40px rgba(123, 36, 28, 0.08);">
         <div style="background: #7B241C; padding: 40px 20px; text-align: center; background-image: linear-gradient(rgba(123, 36, 28, 0.9), rgba(123, 36, 28, 0.9)), url('https://www.transparenttextures.com/patterns/paper-fibers.png');">
@@ -57,13 +61,13 @@ async function processApproval(id, adminReq = null) {
           </div>
 
           <p style="color: #64748B; font-size: 15px; line-height: 1.6;">
-            Your presence will add a vibrant thread to the rich tapestry of stories we aim to tell at Bharat Mandapam. We look forward to creating unforgettable memories together.
+            ${personalizedGreeting}
           </p>
         </div>
 
         <div style="background: #fdf8f2; padding: 30px; border-top: 1px solid #f1e4d1; text-align: center;">
           <p style="margin: 0; color: #7B241C; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">May 23 - 25, 2026</p>
-          <p style="margin: 5px 0 0; color: #4A3728; font-size: 14px;">Bharat Mandapam, Pragati Maidan, New Delhi</p>
+          <p style="margin: 5px 0 0; color: #4A3728; font-size: 14px;">${venueAddress}</p>
         </div>
 
         <div style="padding: 20px; text-align: center; color: #94A3B8; font-size: 12px;">

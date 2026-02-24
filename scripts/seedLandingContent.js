@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const Content = require('../../models/Content');
+const Content = require('../models/Content');
 
 const seedContent = [
     // Hero Section
@@ -44,6 +44,21 @@ const seedContent = [
     { key: 'cta_subtext', value: 'Be part of a movement that celebrates India’s living heritage', section: 'cta' },
     { key: 'cta_link', value: '/join-the-celebration', section: 'cta' },
     { key: 'cta_enabled', value: true, section: 'cta' },
+
+    // Email Templates
+    { key: 'EMAIL_CONFIRM_SUBJECT', value: 'Namaste! Your Saaz-e-Bharat Registration is Confirmed', section: 'email_template' },
+    { key: 'EMAIL_CONFIRM_TITLE', value: 'SAAZ-E-BHARAT', section: 'email_template' },
+    { key: 'EMAIL_CONFIRM_TAGLINE', value: 'Virasat Se Vikas Tak', section: 'email_template' },
+    { key: 'EMAIL_CONFIRM_BODY', value: `It gives us immense joy to inform you that your application for <strong>Saaz-e-Bharat 2026</strong> has been officially confirmed. We are honored to have you join us in this grand celebration of India's tribal roots and folk traditions.`, section: 'email_template' },
+    { key: 'EMAIL_VENUE_ADDRESS', value: 'Jawaharlal Nehru Stadium, Delhi 110003', section: 'email_template' },
+    { key: 'EMAIL_CONFIRM_GREETING', value: 'Your presence will add a vibrant thread to the rich tapestry of stories we aim to tell at {venue}. We look forward to creating unforgettable memories together.', section: 'email_template' },
+    { key: 'EMAIL_OTP_SUBJECT', value: 'Saaz-e-Bharat - Verify Your Identity', section: 'email_template' },
+    { key: 'EMAIL_OTP_TITLE', value: 'SAAZ-E-BHARAT', section: 'email_template' },
+    { key: 'EMAIL_OTP_BODY', value: 'To continue your registration, please verify your identity with the code below:', section: 'email_template' },
+    { key: 'EMAIL_RECEIPT_SUBJECT', value: 'Saaz-e-Bharat - Application Received', section: 'email_template' },
+    { key: 'EMAIL_RECEIPT_BODY', value: 'Namaste {name}, your registration for the <strong>{category}</strong> category has been successfully verified. Our team is now reviewing your information. You will receive another update once your application is approved.', section: 'email_template' },
+    { key: 'EMAIL_REJECT_SUBJECT', value: 'Saaz-e-Bharat - Application Update', section: 'email_template' },
+    { key: 'EMAIL_REJECT_BODY', value: 'Thank you for your interest in Saaz-e-Bharat. After a thorough review of your application and provided credentials, we regret to inform you that we cannot proceed with your registration at this time.', section: 'email_template' },
 ];
 
 const seedDB = async () => {
