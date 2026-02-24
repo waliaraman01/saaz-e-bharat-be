@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const Content = require('../models/Content');
+const Content = require('../../models/Content');
 
 const seedContent = [
     // Hero Section
