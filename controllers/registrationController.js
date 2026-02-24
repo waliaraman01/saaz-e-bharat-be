@@ -90,7 +90,7 @@ exports.register = async (req, res) => {
       }
     });
 
-    const documentUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    // Base64 document handling is done below during final registration creation
 
     const existing = await Registration.findOne({ email });
     if (existing) {
