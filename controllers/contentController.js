@@ -1,5 +1,6 @@
 const Content = require('../models/Content');
 const { logAction } = require('../utils/logger');
+const fs = require('fs');
 
 exports.getContent = async (req, res) => {
     try {
@@ -36,25 +37,34 @@ exports.uploadMedia = async (req, res) => {
         const { key, section } = req.body;
 
         if (!key) {
+            if (req.file.path) fs.unlinkSync(req.file.path);
             return res.status(400).json({ message: 'Field key is required' });
         }
 
-        const fileUrl = `/uploads/${req.file.filename}`;
+        // Read file and convert to Base64 for database storage
+        const fileBuffer = fs.readFileSync(req.file.path);
+        const base64Data = fileBuffer.toString('base64');
+        const mimeType = req.file.mimetype;
+        const base64String = `data:${mimeType};base64,${base64Data}`;
 
         await Content.findOneAndUpdate(
             { key },
             {
-                value: fileUrl,
+                value: base64String,
                 section: section || 'media',
                 updatedBy: req.admin?._id
             },
             { upsert: true }
         );
 
-        await logAction(req, 'UPLOAD_MEDIA', null, 'Content', { key, url: fileUrl });
-        res.json({ message: 'Media uploaded successfully', url: fileUrl });
+        // Delete the temporary file from disk
+        fs.unlinkSync(req.file.path);
+
+        await logAction(req, 'UPLOAD_MEDIA', null, 'Content', { key, info: 'Stored in MongoDB as Base64' });
+        res.json({ message: 'Media uploaded successfully to database', url: base64String });
     } catch (error) {
         console.error('Upload Controller Error:', error);
+        if (req.file && req.file.path) try { fs.unlinkSync(req.file.path); } catch (e) { }
         res.status(500).json({ message: error.message });
     }
 };

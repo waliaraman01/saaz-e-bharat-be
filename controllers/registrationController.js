@@ -2,6 +2,7 @@ const Registration = require('../models/Registration');
 const Content = require('../models/Content');
 const { sendEmail } = require('../utils/email');
 const { logAction } = require('../utils/logger');
+const fs = require('fs');
 
 // Helpers
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -98,7 +99,15 @@ exports.register = async (req, res) => {
       const otp = generateOtp();
       existing.verificationOtp = otp;
       existing.otpExpires = new Date(Date.now() + 30 * 60 * 1000);
-      if (documentUrl) existing.documentUrl = documentUrl;
+
+      if (req.file) {
+        try {
+          const fileBuffer = fs.readFileSync(req.file.path);
+          const base64String = `data:${req.file.mimetype};base64,${fileBuffer.toString('base64')}`;
+          existing.documentUrl = base64String;
+          fs.unlinkSync(req.file.path);
+        } catch (e) { console.error('Doc process error:', e); }
+      }
 
       // Update fields
       existing.phone = phone;
@@ -143,8 +152,18 @@ exports.register = async (req, res) => {
     }
 
     const otp = generateOtp();
+
+    let base64Doc = undefined;
+    if (req.file) {
+      try {
+        const fileBuffer = fs.readFileSync(req.file.path);
+        base64Doc = `data:${req.file.mimetype};base64,${fileBuffer.toString('base64')}`;
+        fs.unlinkSync(req.file.path);
+      } catch (e) { console.error('Doc process error:', e); }
+    }
+
     const registration = new Registration({
-      email, phone, category, fullName, ...details, documentUrl,
+      email, phone, category, fullName, ...details, documentUrl: base64Doc,
       verificationOtp: otp,
       otpExpires: new Date(Date.now() + 30 * 60 * 1000),
       status: 'pending_verification'
