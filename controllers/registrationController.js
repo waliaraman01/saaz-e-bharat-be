@@ -26,21 +26,34 @@ async function processApproval(id, adminReq = null) {
     return found ? found.value : fallback;
   };
 
-  const subject = getSetting('EMAIL_CONFIRM_SUBJECT', 'Namaste! Your Saaz-e-Bharat Registration is Confirmed');
-  const title = getSetting('EMAIL_CONFIRM_TITLE', 'SAAZ-E-BHARAT');
-  const tagline = getSetting('EMAIL_CONFIRM_TAGLINE', 'Virasat Se Vikas Tak');
-  const bodyText = getSetting('EMAIL_CONFIRM_BODY', `It gives us immense joy to inform you that your application for <strong>Saaz-e-Bharat 2026</strong> has been officially confirmed. We are honored to have you join us in this grand celebration of India's tribal roots and folk traditions.`);
-
-  // Replace placeholders
   const name = registration.fullName || registration.artistName || 'Participant';
   const category = registration.category;
-  const personalizedBody = bodyText.replace(/{name}/g, name).replace(/{category}/g, category);
-
   const venueAddress = getSetting('EMAIL_VENUE_ADDRESS', 'Jawaharlal Nehru Stadium, Delhi 110003');
-  const greetingText = getSetting('EMAIL_CONFIRM_GREETING', `Your presence will add a vibrant thread to the rich tapestry of stories we aim to tell at ${venueAddress}. We look forward to creating unforgettable memories together.`);
-  const personalizedGreeting = greetingText.replace(/{venue}/g, venueAddress);
+  const subject = getSetting('EMAIL_CONFIRM_SUBJECT', 'Namaste! Your Saaz-e-Bharat Registration is Confirmed');
 
-  const emailHtml = `
+  // Check for Full HTML Template override
+  const fullHtmlTemplate = getSetting('EMAIL_CONFIRM_FULL_HTML', '');
+
+  let emailHtml = '';
+
+  if (fullHtmlTemplate && fullHtmlTemplate.trim() !== '') {
+    // Fill placeholders for Custom Template
+    emailHtml = fullHtmlTemplate
+      .replace(/{name}/g, name)
+      .replace(/{category}/g, category)
+      .replace(/{venue}/g, venueAddress)
+      .replace(/{id}/g, registration._id.toString().slice(-6).toUpperCase());
+  } else {
+    // Use Standard Builder Template
+    const title = getSetting('EMAIL_CONFIRM_TITLE', 'SAAZ-E-BHARAT');
+    const tagline = getSetting('EMAIL_CONFIRM_TAGLINE', 'Virasat Se Vikas Tak');
+    const bodyText = getSetting('EMAIL_CONFIRM_BODY', `It gives us immense joy to inform you that your application for <strong>Saaz-e-Bharat 2026</strong> has been officially confirmed. We are honored to have you join us in this grand celebration of India's tribal roots and folk traditions.`);
+
+    const personalizedBody = bodyText.replace(/{name}/g, name).replace(/{category}/g, category);
+    const greetingText = getSetting('EMAIL_CONFIRM_GREETING', `Your presence will add a vibrant thread to the rich tapestry of stories we aim to tell at ${venueAddress}. We look forward to creating unforgettable memories together.`);
+    const personalizedGreeting = greetingText.replace(/{venue}/g, venueAddress);
+
+    emailHtml = `
       <div style="font-family: 'Playfair Display', serif; max-width: 600px; margin: 0 auto; border-radius: 24px; overflow: hidden; background: #fffcf8; border: 1px solid #f1e4d1; box-shadow: 0 20px 40px rgba(123, 36, 28, 0.08);">
         <div style="background: #7B241C; padding: 40px 20px; text-align: center; background-image: linear-gradient(rgba(123, 36, 28, 0.9), rgba(123, 36, 28, 0.9)), url('https://www.transparenttextures.com/patterns/paper-fibers.png');">
           <h1 style="color: #D4AF37; margin: 0; font-size: 32px; letter-spacing: 4px; font-family: 'Playfair Display', serif;">${title}</h1>
@@ -75,6 +88,7 @@ async function processApproval(id, adminReq = null) {
         </div>
       </div>
     `;
+  }
 
   await sendEmail(registration.email, subject, emailHtml);
   return registration;
