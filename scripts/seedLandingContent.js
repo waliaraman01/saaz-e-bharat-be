@@ -50,7 +50,7 @@ const seedContent = [
     { key: 'EMAIL_CONFIRM_TITLE', value: 'SAAZ-E-BHARAT', section: 'email_template' },
     { key: 'EMAIL_CONFIRM_TAGLINE', value: 'Virasat Se Vikas Tak', section: 'email_template' },
     { key: 'EMAIL_CONFIRM_BODY', value: `It gives us immense joy to inform you that your application for <strong>Saaz-e-Bharat 2026</strong> has been officially confirmed. We are honored to have you join us in this grand celebration of India's tribal roots and folk traditions.`, section: 'email_template' },
-    { key: 'EMAIL_VENUE_ADDRESS', value: 'Jawaharlal Nehru Stadium, Delhi 110003', section: 'email_template' },
+    { key: 'EMAIL_VENUE_ADDRESS', value: 'Jawaharlal Nehru Stadium, Pragati Vihar, New Delhi, Delhi 110003', section: 'email_template' },
     { key: 'EMAIL_CONFIRM_GREETING', value: 'Your presence will add a vibrant thread to the rich tapestry of stories we aim to tell at {venue}. We look forward to creating unforgettable memories together.', section: 'email_template' },
     { key: 'EMAIL_CONFIRM_FULL_HTML', value: '', section: 'email_template' },
     { key: 'EMAIL_OTP_SUBJECT', value: 'Saaz-e-Bharat - Verify Your Identity', section: 'email_template' },

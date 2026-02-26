@@ -28,7 +28,7 @@ async function processApproval(id, adminReq = null) {
 
   const name = registration.fullName || registration.artistName || 'Participant';
   const category = registration.category;
-  const venueAddress = getSetting('EMAIL_VENUE_ADDRESS', 'Jawaharlal Nehru Stadium, Delhi 110003');
+  const venueAddress = getSetting('EMAIL_VENUE_ADDRESS', 'Jawaharlal Nehru Stadium, Pragati Vihar, New Delhi, Delhi 110003');
   const subject = getSetting('EMAIL_CONFIRM_SUBJECT', 'Namaste! Your Saaz-e-Bharat Registration is Confirmed');
 
   // Check for Full HTML Template override
